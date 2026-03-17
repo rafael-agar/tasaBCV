@@ -1,0 +1,5 @@
+{
+  "name": "Conversor Bolivar-Dólar BCV",
+  "description": "Una aplicación para ver la tasa de cambio oficial del Bolívar venezolano (VES) frente al Dólar estadounidense (USD) según el Banco Central de Venezuela (BCV) y convertir entre las dos monedas.",
+  "requestFramePermissions": []
+}
