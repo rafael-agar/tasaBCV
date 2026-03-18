@@ -89,9 +89,9 @@ const App: React.FC = () => {
 
           {activeTab === 'converter' ? (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
-              <MultiRateDisplay rateData={rateData} />
-              <div className="w-full h-px bg-slate-100"></div>
               <MultiConverter rateData={rateData} />
+              <div className="w-full h-px bg-slate-100"></div>
+              <MultiRateDisplay rateData={rateData} />
             </div>
           ) : (
             <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">

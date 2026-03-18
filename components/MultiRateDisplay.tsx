@@ -37,7 +37,7 @@ const MultiRateDisplay: React.FC<MultiRateDisplayProps> = ({ rateData }) => {
 
   return (
     <div className="space-y-3">
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
         <RateItem label="Dólar" rate={rateData.usd} flag="🇺🇸" currency="USD" />
         <RateItem label="Euro" rate={rateData.eur} flag="🇪🇺" currency="EUR" />
         <RateItem label="USDT" rate={rateData.usdt} flag="🪙" currency="USDT" />

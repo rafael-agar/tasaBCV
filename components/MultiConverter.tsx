@@ -36,6 +36,7 @@ const MultiConverter: React.FC<MultiConverterProps> = ({ rateData }) => {
     USDT: (rateData.usd / rateData.usdt).toFixed(2),
     VES: rateData.usd.toFixed(2)
   });
+  const [isCopied, setIsCopied] = useState<boolean>(false);
 
   const updateAll = (sourceCurrency: string, value: string) => {
     const num = parseFloat(value);
@@ -69,6 +70,41 @@ const MultiConverter: React.FC<MultiConverterProps> = ({ rateData }) => {
     updateAll(currency, val);
   };
 
+  const getShareText = useCallback(() => {
+    return `Conversión de Divisas (BCV):\n` +
+           `🇺🇸 ${amounts.USD} USD\n` +
+           `🇪🇺 ${amounts.EUR} EUR\n` +
+           `🪙 ${amounts.USDT} USDT\n` +
+           `🇻🇪 ${amounts.VES} VES\n\n` +
+           `Tasas: USD: ${rateData.usd.toFixed(2)} | EUR: ${rateData.eur.toFixed(2)} | USDT: ${rateData.usdt.toFixed(2)}`;
+  }, [amounts, rateData]);
+
+  const handleCopy = useCallback(() => {
+    navigator.clipboard.writeText(getShareText()).then(() => {
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 2000);
+    }).catch(err => {
+        console.error('Error al copiar:', err);
+    });
+  }, [getShareText]);
+
+  const handleNativeShare = useCallback(async () => {
+    const shareData = {
+      title: 'Conversión de Divisas',
+      text: getShareText(),
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.error('Error al compartir:', err);
+      }
+    } else {
+      handleCopy();
+    }
+  }, [getShareText, handleCopy]);
+
   return (
     <div className="space-y-4">
       <div className="grid gap-4">
@@ -87,7 +123,43 @@ const MultiConverter: React.FC<MultiConverterProps> = ({ rateData }) => {
         <CurrencyInput currency="VES" flag="🇻🇪" value={amounts.VES} onChange={handleChange('VES')} label="Bolívares (VES)" />
       </div>
 
-      <div className="pt-4 mt-4 border-t border-slate-100">
+      <div className="grid grid-cols-2 gap-3 pt-2">
+            <button
+                onClick={handleCopy}
+                className={`flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-bold transition-all duration-300 ${
+                    isCopied
+                        ? 'bg-green-600 text-white'
+                        : 'bg-[#00064B] hover:opacity-90 text-white shadow-lg shadow-[#00064B]/20'
+                }`}
+            >
+                {isCopied ? (
+                    <>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span className="text-sm">¡Copiado!</span>
+                    </>
+                ) : (
+                    <>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                        <span className="text-sm">Copiar</span>
+                    </>
+                )}
+            </button>
+            <button
+                onClick={handleNativeShare}
+                className="flex items-center justify-center gap-2 px-4 py-3 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold transition-colors text-slate-700 border border-slate-200"
+            >
+                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12s-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
+                </svg>
+                <span className="text-sm">Compartir</span>
+            </button>
+      </div>
+
+      <div className="pt-2 mt-2 border-t border-slate-100">
           <p className="text-center text-[10px] text-slate-400 italic">
             Ingresa un monto en cualquier moneda para ver sus equivalencias.
           </p>
