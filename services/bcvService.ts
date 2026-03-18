@@ -20,7 +20,7 @@ export const fetchExchangeRate = async (): Promise<ExchangeRateData> => {
     return {
       usd: json.data.usd,
       eur: json.data.eur,
-      lastUpdated: new Date(json.data.updatedAt),
+      lastUpdated: new Date(json.data.updatedAt || json.data.date || json.data.createdAt || Date.now()),
     };
   } catch (error) {
     console.error("Error al obtener la tasa de cambio:", error);
@@ -38,7 +38,7 @@ export const fetchHistory = async (): Promise<HistoricalRate[]> => {
     return json.data.map((item: any) => ({
       usd: item.usd,
       eur: item.eur,
-      lastUpdated: new Date(item.updatedAt),
+      lastUpdated: new Date(item.updatedAt || item.date || item.createdAt || Date.now()),
     }));
   } catch (error) {
     console.error("Error al obtener el historial:", error);
@@ -59,7 +59,7 @@ export const fetchRateByDate = async (date: string): Promise<ExchangeRateData | 
     return {
       usd: json.data.usd,
       eur: json.data.eur,
-      lastUpdated: new Date(json.data.updatedAt),
+      lastUpdated: new Date(json.data.updatedAt || json.data.date || json.data.createdAt || Date.now()),
     };
   } catch (error) {
     console.error("Error al obtener tasa por fecha:", error);
