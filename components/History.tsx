@@ -51,7 +51,7 @@ const History: React.FC<HistoryProps> = ({ currency }) => {
     }
   };
 
-  const displayList = filteredRate ? [filteredRate] : history;
+  const displayList = filteredRate ? [filteredRate] : history.slice(0, 7);
 
   if (loading) return <div className="text-center py-4 text-slate-500">Cargando historial...</div>;
   if (error) return <div className="text-center py-4 text-red-500">{error}</div>;
@@ -71,31 +71,44 @@ const History: React.FC<HistoryProps> = ({ currency }) => {
 
       <div className="max-h-64 overflow-y-auto rounded-lg border border-slate-100 bg-slate-50">
         {displayList.length > 0 ? (
-          <table className="w-full text-left text-sm">
-            <thead className="sticky top-0 bg-slate-100 text-slate-600 font-bold uppercase text-xs">
-              <tr>
-                <th className="px-4 py-2">Fecha</th>
-                <th className="px-4 py-2 text-right">Tasa ({currency})</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-200">
-              {displayList.map((rate, index) => {
-                const isValidDate = rate.lastUpdated instanceof Date && !isNaN(rate.lastUpdated.getTime());
-                return (
-                  <tr key={index} className="hover:bg-white transition-colors">
-                    <td className="px-4 py-3 text-slate-600">
-                      {isValidDate 
-                        ? new Intl.DateTimeFormat('es-VE', { dateStyle: 'medium' }).format(rate.lastUpdated)
-                        : 'Fecha inválida'}
-                    </td>
-                    <td className="px-4 py-3 text-right font-mono font-bold text-[#00064B]">
-                      Bs. { (currency === 'USD' ? rate.usd : rate.eur).toFixed(4) }
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          <>
+            <table className="w-full text-left text-sm">
+              <thead className="sticky top-0 bg-slate-100 text-slate-600 font-bold uppercase text-xs">
+                <tr>
+                  <th className="px-4 py-2">Fecha</th>
+                  <th className="px-4 py-2 text-right">USD</th>
+                  <th className="px-4 py-2 text-right">EUR</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-200">
+                {displayList.map((rate, index) => {
+                  const isValidDate = rate.lastUpdated instanceof Date && !isNaN(rate.lastUpdated.getTime());
+                  return (
+                    <tr key={index} className="hover:bg-white transition-colors">
+                      <td className="px-4 py-3 text-slate-600">
+                        {isValidDate 
+                          ? new Intl.DateTimeFormat('es-VE', { dateStyle: 'medium' }).format(rate.lastUpdated)
+                          : 'Fecha inválida'}
+                      </td>
+                      <td className={`px-4 py-3 text-right font-mono font-bold ${currency === 'USD' ? 'text-[#00064B] bg-blue-50/30' : 'text-slate-500'}`}>
+                        {rate.usd.toFixed(4)}
+                      </td>
+                      <td className={`px-4 py-3 text-right font-mono font-bold ${currency === 'EUR' ? 'text-[#00064B] bg-blue-50/30' : 'text-slate-500'}`}>
+                        {rate.eur.toFixed(4)}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+            {!filteredRate && history.length > 7 && (
+              <div className="p-2 text-center border-t border-slate-100">
+                <p className="text-[10px] text-slate-400 italic">
+                  Mostrando los últimos 7 registros. Usa el filtro para fechas anteriores.
+                </p>
+              </div>
+            )}
+          </>
         ) : (
           <div className="p-8 text-center text-slate-400 italic">
             No se encontraron registros para esta fecha.
