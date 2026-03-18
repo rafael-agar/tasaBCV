@@ -11,23 +11,50 @@ const CurrencyInput: React.FC<{
     value: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     label?: string;
-}> = ({ currency, flag, value, onChange, label }) => (
-    <div className="relative">
-        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <span className="text-slate-400 text-2xl">{flag}</span>
-            <span className="text-slate-500 ml-2 font-bold">{currency}</span>
+}> = ({ currency, flag, value, onChange, label }) => {
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = () => {
+        if (!value) return;
+        navigator.clipboard.writeText(value).then(() => {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        });
+    };
+
+    return (
+        <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <span className="text-slate-400 text-2xl">{flag}</span>
+                <span className="text-slate-500 ml-2 font-bold">{currency}</span>
+            </div>
+            <input
+                type="text"
+                inputMode="decimal"
+                value={value}
+                onChange={onChange}
+                placeholder="0.00"
+                className="w-full bg-white border-2 border-slate-200 focus:border-[#00064B] rounded-lg text-2xl font-mono text-right py-3 pr-12 pl-28 transition-all focus:outline-none focus:ring-4 focus:ring-[#00064B]/5 text-slate-900"
+            />
+            <button
+                onClick={handleCopy}
+                className={`absolute inset-y-0 right-0 pr-3 flex items-center transition-colors ${copied ? 'text-green-500' : 'text-slate-300 hover:text-[#00064B]'}`}
+                title="Copiar valor"
+            >
+                {copied ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                )}
+            </button>
+            {label && <p className="text-[10px] text-slate-400 mt-1 ml-1 uppercase font-bold tracking-wider">{label}</p>}
         </div>
-        <input
-            type="text"
-            inputMode="decimal"
-            value={value}
-            onChange={onChange}
-            placeholder="0.00"
-            className="w-full bg-white border-2 border-slate-200 focus:border-[#00064B] rounded-lg text-2xl font-mono text-right py-3 pr-4 pl-28 transition-all focus:outline-none focus:ring-4 focus:ring-[#00064B]/5 text-slate-900"
-        />
-        {label && <p className="text-[10px] text-slate-400 mt-1 ml-1 uppercase font-bold tracking-wider">{label}</p>}
-    </div>
-);
+    );
+};
 
 const MultiConverter: React.FC<MultiConverterProps> = ({ rateData }) => {
   const [amounts, setAmounts] = useState({
