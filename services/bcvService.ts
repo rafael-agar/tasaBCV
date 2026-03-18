@@ -5,26 +5,35 @@ const BASE_URL = 'https://tasa-bcv-seven.vercel.app/api/rates';
 
 export const fetchExchangeRate = async (): Promise<ExchangeRateData> => {
   try {
-    const response = await fetch(`${BASE_URL}/latest`);
+    const [bcvResponse, usdtResponse] = await Promise.allSettled([
+      fetch(`${BASE_URL}/latest`),
+      fetch('https://ve.dolarapi.com/v1/dolares/binance')
+    ]);
     
-    if (!response.ok) {
-      throw new Error(`Error HTTP: ${response.status}`);
+    let bcvData = { usd: 0, eur: 0, updatedAt: new Date().toISOString() };
+    let usdtPrice = 0;
+
+    if (bcvResponse.status === 'fulfilled' && bcvResponse.value.ok) {
+      const json = await bcvResponse.value.json();
+      if (json.success && json.data) {
+        bcvData = json.data;
+      }
     }
 
-    const json = await response.json();
-
-    if (!json.success || !json.data) {
-      throw new Error("La respuesta de la API no es válida.");
+    if (usdtResponse.status === 'fulfilled' && usdtResponse.value.ok) {
+      const json = await usdtResponse.value.json();
+      usdtPrice = json.promedio || json.venta || 0;
     }
 
     return {
-      usd: json.data.usd,
-      eur: json.data.eur,
-      lastUpdated: new Date(json.data.updatedAt || json.data.date || json.data.createdAt || Date.now()),
+      usd: bcvData.usd,
+      eur: bcvData.eur,
+      usdt: usdtPrice,
+      lastUpdated: new Date(bcvData.updatedAt || Date.now()),
     };
   } catch (error) {
     console.error("Error al obtener la tasa de cambio:", error);
-    throw new Error("No se pudo obtener la tasa de cambio del BCV. Inténtelo de nuevo más tarde.");
+    throw new Error("No se pudo obtener la tasa de cambio. Inténtelo de nuevo más tarde.");
   }
 };
 

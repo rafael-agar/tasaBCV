@@ -2,11 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { HistoricalRate, Currency } from '../types';
 import { fetchHistory, fetchRateByDate } from '../services/bcvService';
 
-interface HistoryProps {
-  currency: Currency;
-}
-
-const History: React.FC<HistoryProps> = ({ currency }) => {
+const History: React.FC = () => {
   const [history, setHistory] = useState<HistoricalRate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -90,10 +86,10 @@ const History: React.FC<HistoryProps> = ({ currency }) => {
                           ? new Intl.DateTimeFormat('es-VE', { dateStyle: 'medium' }).format(rate.lastUpdated)
                           : 'Fecha inválida'}
                       </td>
-                      <td className={`px-4 py-3 text-right font-mono font-bold ${currency === 'USD' ? 'text-[#00064B] bg-blue-50/30' : 'text-slate-500'}`}>
+                      <td className="px-4 py-3 text-right font-mono font-bold text-[#00064B]">
                         {rate.usd.toFixed(4)}
                       </td>
-                      <td className={`px-4 py-3 text-right font-mono font-bold ${currency === 'EUR' ? 'text-[#00064B] bg-blue-50/30' : 'text-slate-500'}`}>
+                      <td className="px-4 py-3 text-right font-mono font-bold text-[#00064B]">
                         {rate.eur.toFixed(4)}
                       </td>
                     </tr>

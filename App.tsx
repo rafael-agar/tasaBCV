@@ -119,7 +119,7 @@ const App: React.FC = () => {
             </div>
           ) : (
             <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-              <History currency={currency} />
+              <History />
             </div>
           )}
         </div>

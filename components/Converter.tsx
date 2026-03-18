@@ -72,7 +72,8 @@ const Converter: React.FC<ConverterProps> = ({ rate, currency }) => {
   const getShareText = useCallback(() => {
     const f = parseFloat(foreignAmount) || 0;
     const v = parseFloat(ves) || 0;
-    return `El resultado de la conversión es:\n${f.toFixed(2)} ${currency} equivalen a ${v.toFixed(2)} VES.\n\n(Tasa de cambio BCV: ${rate.toFixed(4)} Bs/${currency})`;
+    const source = currency === 'USDT' ? 'Binance P2P' : 'BCV';
+    return `El resultado de la conversión es:\n${f.toFixed(2)} ${currency} equivalen a ${v.toFixed(2)} VES.\n\n(Tasa de cambio ${source}: ${rate.toFixed(4)} Bs/${currency})`;
   }, [foreignAmount, ves, rate, currency]);
 
   const handleCopy = useCallback(() => {
@@ -111,7 +112,16 @@ const Converter: React.FC<ConverterProps> = ({ rate, currency }) => {
     }
   }, [foreignAmount, ves, getShareText]);
 
-  const flag = currency === 'USD' ? '🇺🇸' : '🇪🇺';
+  const getFlag = () => {
+    switch (currency) {
+        case 'USD': return '🇺🇸';
+        case 'EUR': return '🇪🇺';
+        case 'USDT': return '🪙';
+        default: return '💵';
+    }
+  };
+
+  const flag = getFlag();
 
   return (
     <div className="space-y-4">
