@@ -112,14 +112,6 @@ const MultiConverter: React.FC<MultiConverterProps> = ({ rateData }) => {
         <CurrencyInput currency="EUR" flag="🇪🇺" value={amounts.EUR} onChange={handleChange('EUR')} label="Euro" />
         <CurrencyInput currency="USDT" flag="🪙" value={amounts.USDT} onChange={handleChange('USDT')} label="Tether / USDT" />
         
-        <div className="flex justify-center py-1">
-            <div className="bg-slate-100 p-1.5 rounded-full border border-slate-200">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                </svg>
-            </div>
-        </div>
-
         <CurrencyInput currency="VES" flag="🇻🇪" value={amounts.VES} onChange={handleChange('VES')} label="Bolívares (VES)" />
       </div>
 
