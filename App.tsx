@@ -1,16 +1,15 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import fetchExchangeRate from './services/bcvService';
-import { ExchangeRateData, Currency } from './types';
-import RateDisplay from './components/RateDisplay';
-import Converter from './components/Converter';
+import { ExchangeRateData } from './types';
+import MultiRateDisplay from './components/MultiRateDisplay';
+import MultiConverter from './components/MultiConverter';
 import History from './components/History';
 
 type Tab = 'converter' | 'history';
 
 const App: React.FC = () => {
   const [rateData, setRateData] = useState<ExchangeRateData | null>(null);
-  const [currency, setCurrency] = useState<Currency>('USD');
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>('converter');
@@ -63,10 +62,6 @@ const App: React.FC = () => {
     }
 
     if (rateData) {
-      let currentRate = rateData.usd;
-      if (currency === 'EUR') currentRate = rateData.eur;
-      if (currency === 'USDT') currentRate = rateData.usdt;
-      
       return (
         <div className="space-y-6">
           <div className="flex p-1 bg-slate-100 rounded-xl">
@@ -94,41 +89,9 @@ const App: React.FC = () => {
 
           {activeTab === 'converter' ? (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
-              <div className="flex justify-center gap-2">
-                <button
-                  onClick={() => setCurrency('USD')}
-                  className={`px-4 py-2 rounded-lg font-bold transition-all ${
-                    currency === 'USD' 
-                      ? 'bg-[#00064B] text-white shadow-lg shadow-[#00064B]/20' 
-                      : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-                  }`}
-                >
-                  USD 🇺🇸
-                </button>
-                <button
-                  onClick={() => setCurrency('EUR')}
-                  className={`px-4 py-2 rounded-lg font-bold transition-all ${
-                    currency === 'EUR' 
-                      ? 'bg-[#00064B] text-white shadow-lg shadow-[#00064B]/20' 
-                      : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-                  }`}
-                >
-                  EUR 🇪🇺
-                </button>
-                <button
-                  onClick={() => setCurrency('USDT')}
-                  className={`px-4 py-2 rounded-lg font-bold transition-all ${
-                    currency === 'USDT' 
-                      ? 'bg-[#00064B] text-white shadow-lg shadow-[#00064B]/20' 
-                      : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-                  }`}
-                >
-                  USDT 🪙
-                </button>
-              </div>
-              <RateDisplay rate={currentRate} currency={currency} lastUpdated={rateData.lastUpdated} />
+              <MultiRateDisplay rateData={rateData} />
               <div className="w-full h-px bg-slate-100"></div>
-              <Converter rate={currentRate} currency={currency} />
+              <MultiConverter rateData={rateData} />
             </div>
           ) : (
             <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
