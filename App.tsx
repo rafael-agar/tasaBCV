@@ -63,7 +63,10 @@ const App: React.FC = () => {
     }
 
     if (rateData) {
-      const currentRate = currency === 'USD' ? rateData.usd : rateData.eur;
+      let currentRate = rateData.usd;
+      if (currency === 'EUR') currentRate = rateData.eur;
+      if (currency === 'USDT') currentRate = rateData.usdt;
+      
       return (
         <div className="space-y-6">
           <div className="flex p-1 bg-slate-100 rounded-xl">
@@ -111,6 +114,16 @@ const App: React.FC = () => {
                   }`}
                 >
                   EUR 🇪🇺
+                </button>
+                <button
+                  onClick={() => setCurrency('USDT')}
+                  className={`px-4 py-2 rounded-lg font-bold transition-all ${
+                    currency === 'USDT' 
+                      ? 'bg-[#00064B] text-white shadow-lg shadow-[#00064B]/20' 
+                      : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                  }`}
+                >
+                  USDT 🪙
                 </button>
               </div>
               <RateDisplay rate={currentRate} currency={currency} lastUpdated={rateData.lastUpdated} />

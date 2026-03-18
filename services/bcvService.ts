@@ -5,35 +5,27 @@ const BASE_URL = 'https://tasa-bcv-seven.vercel.app/api/rates';
 
 export const fetchExchangeRate = async (): Promise<ExchangeRateData> => {
   try {
-    const [bcvResponse, usdtResponse] = await Promise.allSettled([
-      fetch(`${BASE_URL}/latest`),
-      fetch('https://ve.dolarapi.com/v1/dolares/binance')
-    ]);
+    const response = await fetch(`${BASE_URL}/latest`);
     
-    let bcvData = { usd: 0, eur: 0, updatedAt: new Date().toISOString() };
-    let usdtPrice = 0;
-
-    if (bcvResponse.status === 'fulfilled' && bcvResponse.value.ok) {
-      const json = await bcvResponse.value.json();
-      if (json.success && json.data) {
-        bcvData = json.data;
-      }
+    if (!response.ok) {
+      throw new Error(`Error HTTP: ${response.status}`);
     }
 
-    if (usdtResponse.status === 'fulfilled' && usdtResponse.value.ok) {
-      const json = await usdtResponse.value.json();
-      usdtPrice = json.promedio || json.venta || 0;
+    const json = await response.json();
+
+    if (!json.success || !json.data) {
+      throw new Error("La respuesta de la API no es válida.");
     }
 
     return {
-      usd: bcvData.usd,
-      eur: bcvData.eur,
-      usdt: usdtPrice,
-      lastUpdated: new Date(bcvData.updatedAt || Date.now()),
+      usd: json.data.usd,
+      eur: json.data.eur,
+      usdt: json.data.usdt || 0,
+      lastUpdated: new Date(json.data.updatedAt || json.data.date || json.data.createdAt || Date.now()),
     };
   } catch (error) {
     console.error("Error al obtener la tasa de cambio:", error);
-    throw new Error("No se pudo obtener la tasa de cambio. Inténtelo de nuevo más tarde.");
+    throw new Error("No se pudo obtener la tasa de cambio del BCV. Inténtelo de nuevo más tarde.");
   }
 };
 
@@ -47,6 +39,7 @@ export const fetchHistory = async (): Promise<HistoricalRate[]> => {
     return json.data.map((item: any) => ({
       usd: item.usd,
       eur: item.eur,
+      usdt: item.usdt || 0,
       lastUpdated: new Date(item.updatedAt || item.date || item.createdAt || Date.now()),
     }));
   } catch (error) {
@@ -68,6 +61,7 @@ export const fetchRateByDate = async (date: string): Promise<ExchangeRateData | 
     return {
       usd: json.data.usd,
       eur: json.data.eur,
+      usdt: json.data.usdt || 0,
       lastUpdated: new Date(json.data.updatedAt || json.data.date || json.data.createdAt || Date.now()),
     };
   } catch (error) {

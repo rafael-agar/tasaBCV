@@ -2,7 +2,7 @@
 export interface ExchangeRateData {
   usd: number;
   eur: number;
-  usdt?: number;
+  usdt: number;
   lastUpdated: Date;
 }
 

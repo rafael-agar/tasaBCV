@@ -74,6 +74,7 @@ const History: React.FC = () => {
                   <th className="px-4 py-2">Fecha</th>
                   <th className="px-4 py-2 text-right">USD</th>
                   <th className="px-4 py-2 text-right">EUR</th>
+                  <th className="px-4 py-2 text-right">USDT</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -91,6 +92,9 @@ const History: React.FC = () => {
                       </td>
                       <td className="px-4 py-3 text-right font-mono font-bold text-[#00064B]">
                         {rate.eur.toFixed(4)}
+                      </td>
+                      <td className="px-4 py-3 text-right font-mono font-bold text-[#00064B]">
+                        {rate.usdt.toFixed(4)}
                       </td>
                     </tr>
                   );
