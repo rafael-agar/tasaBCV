@@ -1,7 +1,7 @@
 
 import { ExchangeRateData, HistoricalRate } from '../types';
 
-const BASE_URL = 'https://tasa-bcv-seven.vercel.app/api/rates';
+const BASE_URL = 'https://tasa-bcv-yz4g.onrender.com/api/rates';
 
 export const fetchExchangeRate = async (): Promise<ExchangeRateData> => {
   try {
